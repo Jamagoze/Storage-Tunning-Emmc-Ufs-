@@ -1,6 +1,6 @@
 # eMMC / UFS Storage Tune
 
-Two Magisk modules that tune Android storage for faster loading of large files (game assets and similar). No zram settings, no logging.
+Two Magisk modules that tune Android storage for faster loading of large files (game assets and similar).
 
 | Module | Use on |
 |---|---|
@@ -8,8 +8,6 @@ Two Magisk modules that tune Android storage for faster loading of large files (
 | `ufs_tune.zip` | Devices with UFS storage (`sda` and others). Does nothing on eMMC. |
 
 Values are applied at boot and again after 1 and 3 minutes (some vendor kernels reset them), then the script exits. Nothing keeps running or polling. Edit `config.txt` to change a value. Leave a value empty, or write `keep`, to skip it.
-
-Developed on a Redmi Pad SE (Snapdragon 680, 4GB RAM, eMMC), rooted.
 
 ---
 
@@ -80,7 +78,7 @@ No. The first apply runs as soon as boot finishes. The later re-applies only cov
 
 **Why don't manufacturers tune it like this?**
 They tune for the average user and the worst case.
-- Larger read-ahead and a lower `vfs_cache_pressure` hold more data in RAM, which can mean more app kills and more zram swapping on a 4GB device.
+- Larger read-ahead and a lower `vfs_cache_pressure` hold more data in RAM, which can mean more app kills on a 4GB device.
 - The gain is biggest for large sequential reads, while many apps read small scattered chunks.
 - Reading data that is never used costs a little power.
 - Budget devices get little storage tuning, and retesting thousands of apps is expensive.
@@ -93,8 +91,6 @@ Only a little. 2048 read-ahead and 512 `nr_requests` are near the ceiling. Going
 Left out on purpose:
 - `nomerges` (the default is right).
 - Anything that disables barriers or the write cache, because those risk data loss.
-- F2FS tunables, because other modules may already set them.
-- zram settings (`page-cluster`, `swappiness`), because this project is storage only.
 
 **Is it universal across manufacturers?**
 The ideas are. The exact settings and paths are not.
