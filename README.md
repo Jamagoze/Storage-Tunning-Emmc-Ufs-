@@ -20,7 +20,7 @@ Values are applied at boot and again after 1 and 3 minutes (some vendor kernels 
 | `NR_REQUESTS` | 512 | Returns diminish above this |
 | `MAX_SECTORS_KB` | `max` | Device maximum request size |
 | `SCHEDULER` | `none` | Applied only if the kernel has it |
-| `WBT_LAT_USEC` | 0 | Write throttling off, so reads aren't delayed behind writes |
+| `WBT_LAT_USEC` | empty (stock) | Write-back throttling. 0 turns it off, which can make reads slower during heavy writes |
 | `IOSTATS`, `ADD_RANDOM` | 0 | Small CPU savings per I/O |
 | `RQ_AFFINITY` | 2 | Small CPU savings per I/O |
 | `CLK_SCALING` | 0 | eMMC at full speed, small battery cost |
@@ -34,7 +34,7 @@ Same as above, with these differences:
 - `DEVICES=auto` tunes every `sd*` block device that sits on a UFS host.
 - `READ_AHEAD_KB=auto` picks 512 below 3GB of RAM, 1024 at 3 to 6GB, and 2048 above that. You can also set a number.
 - `NR_REQUESTS` defaults to 256.
-- UFS clock scaling (`clkscale_enable`) is off by default and clock gating (`clkgate_enable`) is skipped by default. These are the Qualcomm UFS paths, and any missing path is skipped.
+- UFS clock scaling (`clkscale_enable`) is skipped by default and clock gating (`clkgate_enable`) is skipped by default. These are the Qualcomm UFS paths, and any missing path is skipped.
 - `UFS_GOVERNOR` is empty by default. `performance` is the usual value if you want it.
 - UFS write booster is left out on purpose, because it uses an SLC buffer that adds wear and varies between chips.
 
@@ -84,6 +84,12 @@ They tune for the average user and the worst case.
 - Budget devices get little storage tuning, and retesting thousands of apps is expensive.
 
 On your own device you know the workload. Over a few days, watch for apps reloading after you switch away (RAM too tight) and new stutter. If you see them, lower read-ahead from 2048 to 1024 first.
+
+**Why does `nr_requests` read 31 instead of my value?**
+With the `none` scheduler, `nr_requests` is capped by the hardware queue depth (31 on many eMMC chips), so a larger value is rejected and skipped. To use a deeper queue (for example 512), set `SCHEDULER=mq-deadline` (or another scheduler your kernel lists). Test both and keep what loads faster.
+
+**Why do some paths say "Invalid argument" or "No such file"?**
+`wbt_lat_usec` only works when write-back throttling is active for the current scheduler, and `clk_scaling` only exists on kernels that expose it. A missing or unreadable path is skipped, and the other settings still apply.
 
 **Can I tune it more?**
 Only a little. 2048 read-ahead and 512 `nr_requests` are near the ceiling. Going lower than 30 on `vfs_cache_pressure` gains very little, and below 10 the kernel hoards cache it doesn't need.
