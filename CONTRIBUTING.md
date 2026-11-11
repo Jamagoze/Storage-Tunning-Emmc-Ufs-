@@ -1,6 +1,6 @@
 # Contributing to Storage Tuning (eMMC / UFS)
 
-Thank you for your interest in contributing to **Storage-Tunning-Emmc-Ufs-**! ðŸŽ‰ This project aims to provide safe, effective, and benchmarked storage performance tweaks (I/O schedulers, read-ahead buffers, file-system params, and kernel sysfs tunings) for eMMC and UFS storage chips on Android/Linux systems.
+Thank you for your interest in contributing to **Storage-Tunning-Emmc-Ufs-**! This project aims to provide safe, effective, and benchmarked storage performance tweaks (I/O schedulers, read-ahead buffers, file-system params, and kernel sysfs tunings) for eMMC and UFS storage chips on Android/Linux systems.
 
 Because low-level storage modifications directly impact system stability, data integrity, and battery efficiency, we ask that all contributors follow these guidelines.
 
